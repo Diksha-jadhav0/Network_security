@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: phishing_backend
+    ports:
+      - "8000:8000"
+    environment:
+      - JWT_SECRET_KEY=super-secret-cybersecurity-jwt-key-2026
+      - DATABASE_URL=sqlite:///./phishing_detector.db
+    volumes:
+      - ./backend/phishing_detector.db:/app/phishing_detector.db
+      - ./backend/app/ml:/app/app/ml
+      - ./dataset:/dataset
+    restart: always
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: phishing_frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    restart: always
